@@ -13,19 +13,19 @@ class DataCard extends React.Component {
        
         return(                   
                 <Pie data={{
-                    labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],    
+                    labels: this.props.labels,    
                     datasets: [
                         {
                         label: 'Dataset 1',
-                        data: [1, 5, 10, 15, 25],
+                        data: this.props.data,
                         backgroundColor: [
-                            'red', 'blue', 'yellow', 'black', 'pink'
+                            '#26756B', '#99F7EA', '#4EF4DF', '#49756F', '#3EC2B0'
                         ]
                         }
                     ]                  
                 }}              
-                height={10}
-                widht={10}
+                height={50}
+                widht={50}
                 options={{
                     indexAxis: 'y',
                     // Elements options apply to all of the options unless overridden in a dataset

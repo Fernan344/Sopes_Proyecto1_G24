@@ -3,7 +3,8 @@ import { BrowserRouter, Route, Redirect } from "react-router-dom";
 import Principal from "./Pages/Principal";
 import Reportes from "./Pages/Reportes";
 
-function App() {
+function App() { 
+
   return(
     <BrowserRouter>
         <Route path="/Principal" component={Principal} />

@@ -13,28 +13,28 @@ class DataCard extends React.Component {
        
         return(                   
                 <Bar data={{
-                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange', 'Black'],        
+                    labels: this.props.labels,        
                     datasets: [{
                         label: 'UpVotes',
-                        data: [12, 15, 25, 12, 25, 38, 40],
-                        borderColor: 'red',
-                        backgroundColor: 'white',
+                        data: this.props.upvotes,
+                        borderColor: '#26756B',
+                        backgroundColor: '#4EF4DF',
                         borderWidth: 2,
                         borderRadius: 40,
                         borderSkipped: false,
                     },
                     {
                         label: 'DownVotes',
-                        data: [-21, -41, -35, -18, -15, -17, -12],
-                        borderColor: 'white',
-                        backgroundColor: 'red',
+                        data: this.props.downvotes,
+                        borderColor: '#4EF4DF',
+                        backgroundColor: '#26756B',
                         borderWidth: 2,
                         borderRadius: 40,
                         borderSkipped: false,
                     }]                    
                 }}              
-                height={290}
-                widht={75}
+                height={this.props.altura}
+                widht={100}
                 options={{
                     indexAxis: 'y',
                     // Elements options apply to all of the options unless overridden in a dataset
@@ -51,7 +51,7 @@ class DataCard extends React.Component {
                     },
                     title: {
                         display: true,
-                        text: 'Chart.js Horizontal Bar Chart'
+                        text: 'Up And Down Votes By Day'
                     }
                     }
                 }}
