@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type task struct {
@@ -50,6 +52,8 @@ func indexRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/", indexRoute)
 	fmt.Println("Hello Go")
 	http.HandleFunc("/", indexRoute)
 	http.HandleFunc("/tasks", getTasks)
