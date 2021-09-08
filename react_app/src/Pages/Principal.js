@@ -25,16 +25,14 @@ class Principal extends React.Component {
         })
     }
 
-    render() {
+    componentDidMount(){
+        socket.on('addTweet', data => {
+            this.addTweet(data)
+            console.log(JSON.stringify(data), "-----")
+        })
+    }
 
-        if(this.state.add!==true){
-            socket.on('addTweet', data => {
-                this.addTweet(data)
-                console.log(JSON.stringify(data), "-----")
-            })        
-        }else{
-            this.state.add=false;
-        }
+    render() {
 
         return (
             <form>
