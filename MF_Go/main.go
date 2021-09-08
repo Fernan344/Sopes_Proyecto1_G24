@@ -52,11 +52,12 @@ func indexRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	fmt.Println("Hello Go")
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", indexRoute)
-	fmt.Println("Hello Go")
-	http.HandleFunc("/", indexRoute)
-	http.HandleFunc("/tasks", getTasks)
-	http.HandleFunc("/createTask", createTask)
-	log.Fatal(http.ListenAndServe(":5000", nil))
+	router.HandleFunc("/tasks", getTasks).Methods("GET")
+	router.HandleFunc("/createTask", createTask).Methods("POST")
+	log.Fatal(http.ListenAndServe(":5000", router))
 }
