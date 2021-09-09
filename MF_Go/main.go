@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -29,6 +30,68 @@ var tasks = allTasks{
 func getTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(tasks)
+}
+
+func getTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	taskId, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		fmt.Fprintf(w, "Invalid ID")
+		return
+	}
+
+	for _, task := range tasks {
+		if task.ID == taskId {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(task)
+		}
+	}
+}
+
+func deleteTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	taskId, err := strconv.Atoi(vars["id"])
+
+	if err != nil {
+		fmt.Fprintf(w, "Invalid ID")
+		return
+	}
+
+	for index, task := range tasks {
+		if task.ID == taskId {
+			tasks = append(tasks[:index], tasks[index+1:]...)
+			fmt.Fprintf(w, "The task with ID %v has been remove succesfully", taskId)
+		}
+	}
+}
+
+func updateTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	taskId, err := strconv.Atoi(vars["id"])
+
+	var updatedTask task
+
+	if err != nil {
+		fmt.Fprintf(w, "Invalid ID")
+		return
+	}
+
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprintf(w, "Insert a Valid Task")
+	}
+
+	json.Unmarshal(reqBody, &updatedTask)
+
+	for index, task := range tasks {
+		if task.ID == taskId {
+			tasks = append(tasks[:index], tasks[index+1:]...)
+			updatedTask.ID = taskId
+			tasks = append(tasks, updatedTask)
+			fmt.Fprintf(w, "The task with ID %v has been updated succesfully", taskId)
+		}
+	}
 }
 
 func createTask(w http.ResponseWriter, r *http.Request) {
@@ -59,5 +122,8 @@ func main() {
 	router.HandleFunc("/", indexRoute)
 	router.HandleFunc("/tasks", getTasks).Methods("GET")
 	router.HandleFunc("/createTask", createTask).Methods("POST")
+	router.HandleFunc("/tasks/{id}", getTask).Methods("GET")
+	router.HandleFunc("/tasks/{id}", deleteTask).Methods("DELETE")
+	router.HandleFunc("/tasks/{id}", updateTask).Methods("PUT")
 	log.Fatal(http.ListenAndServe(":5000", router))
 }
