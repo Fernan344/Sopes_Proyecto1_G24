@@ -3,6 +3,6 @@ const router = express.Router()
 const clientController = require("../Controller/client.controller")
 
 router.get("/", clientController.test)
-router.post("/addTweet", clientController.addTweet)
+router.get("/getTweets", clientController.getTweets)
 
 module.exports = router

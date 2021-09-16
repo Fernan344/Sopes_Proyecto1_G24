@@ -1,6 +1,7 @@
-import express from 'express'
-import { Server as WebSocketServer } from 'socket.io'
-import http from 'http'
+const express = require('express')
+const Server = require('socket.io')
+const WebSocketServer = require('socket.io')
+const http = require('http')
 const theSocket = require('./Recursos/Socket');
 const clientRouter = require('./routes/client.router.js')
 
@@ -22,7 +23,7 @@ app.use('/', clientRouter)
 
 const httpServer = http.createServer(app);
 
-const io = new WebSocketServer(httpServer)
+const io = WebSocketServer(httpServer)
 
 io.on('connection', (socket) => {
     console.log('nueva Conexion', socket.id)

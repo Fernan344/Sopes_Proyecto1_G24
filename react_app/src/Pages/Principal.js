@@ -2,6 +2,7 @@ import React from "react";
 import NavVar from "../Components/NavVar";
 import Card from "../Components/CardPublication"
 import socket from "../Recursos/Socket";
+const connection = require("../Recursos/Connection")
 
 class Principal extends React.Component {
     constructor(props) {
@@ -26,10 +27,19 @@ class Principal extends React.Component {
     }
 
     componentDidMount(){
-        socket.on('addTweet', data => {
+        fetch(connection.getConnection()+'/getTweets')
+        .then(res => res.json()).then((data) => {
+            if (data["null"]===false){      
+                console.log(data["data"])
+                this.setState({
+                    twits: JSON.parse(data["data"]),       
+                })
+            }
+        }) 
+        /*socket.on('addTweet', data => {
             this.addTweet(data)
             console.log(JSON.stringify(data), "-----")
-        })
+        })*/
     }
 
     render() {
@@ -39,7 +49,7 @@ class Principal extends React.Component {
                 <NavVar/>
                 {
                     this.state.twits.map(tupla => (
-                        <Card nombre={tupla["nombre"]} comentario={tupla["comentario"]} fecha={tupla["fecha"]} hashtags={tupla["hashtags"]} upvotes={tupla["upvotes"]} downvotes={tupla["downvotes"]}/>
+                        <Card nombre={tupla["nombre"]} comentario={tupla["comentario"]} fecha={tupla["fecha"]} hashtags={tupla["hashtags"]} downvotes={tupla["upvotes"]} upvotes={tupla["downvotes"]}/>
                     ))
                 }
                 

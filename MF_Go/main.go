@@ -1,129 +1,76 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
+	"os"
 )
 
-type task struct {
-	ID      int    `json:ID`
-	Name    string `json:Name`
-	Content string `json:Content`
-}
-
-type allTasks []task
-
-var tasks = allTasks{
-	{
-		ID:      1,
-		Name:    "Task One",
-		Content: "Some Content",
-	},
-}
-
-func getTasks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(tasks)
-}
-
-func getTask(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	taskId, err := strconv.Atoi(vars["id"])
-
-	if err != nil {
-		fmt.Fprintf(w, "Invalid ID")
-		return
-	}
-
-	for _, task := range tasks {
-		if task.ID == taskId {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(task)
-		}
-	}
-}
-
-func deleteTask(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	taskId, err := strconv.Atoi(vars["id"])
-
-	if err != nil {
-		fmt.Fprintf(w, "Invalid ID")
-		return
-	}
-
-	for index, task := range tasks {
-		if task.ID == taskId {
-			tasks = append(tasks[:index], tasks[index+1:]...)
-			fmt.Fprintf(w, "The task with ID %v has been remove succesfully", taskId)
-		}
-	}
-}
-
-func updateTask(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	taskId, err := strconv.Atoi(vars["id"])
-
-	var updatedTask task
-
-	if err != nil {
-		fmt.Fprintf(w, "Invalid ID")
-		return
-	}
-
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Fprintf(w, "Insert a Valid Task")
-	}
-
-	json.Unmarshal(reqBody, &updatedTask)
-
-	for index, task := range tasks {
-		if task.ID == taskId {
-			tasks = append(tasks[:index], tasks[index+1:]...)
-			updatedTask.ID = taskId
-			tasks = append(tasks, updatedTask)
-			fmt.Fprintf(w, "The task with ID %v has been updated succesfully", taskId)
-		}
-	}
-}
-
-func createTask(w http.ResponseWriter, r *http.Request) {
-	var newTask task
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Fprintf(w, "Insert a Valid Task")
-	}
-
-	json.Unmarshal(reqBody, &newTask)
-	newTask.ID = len(tasks) + 1
-	tasks = append(tasks, newTask)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(newTask)
-}
-
-func indexRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome")
-}
-
 func main() {
+	// leer el arreglo de bytes del archivo
+	jsonFile, err := os.Open("generated.json")
 
-	fmt.Println("Hello Go")
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", indexRoute)
-	router.HandleFunc("/tasks", getTasks).Methods("GET")
-	router.HandleFunc("/createTask", createTask).Methods("POST")
-	router.HandleFunc("/tasks/{id}", getTask).Methods("GET")
-	router.HandleFunc("/tasks/{id}", deleteTask).Methods("DELETE")
-	router.HandleFunc("/tasks/{id}", updateTask).Methods("PUT")
-	log.Fatal(http.ListenAndServe(":5000", router))
+	defer jsonFile.Close()
+
+	datosComoBytes, _ := ioutil.ReadAll(jsonFile)
+
+	var decoded []interface{}
+
+	err = json.Unmarshal(datosComoBytes, &decoded)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	for i := 0; i < len(decoded); i++ {
+		clienteHttp := &http.Client{}
+		// Si quieres agregar parámetros a la URL simplemente haz una
+		// concatenación :)
+		url := "http://localhost:4500/add_tweet"
+
+		tweetComoJson, err := json.Marshal(decoded[i])
+		if err != nil {
+			// Maneja el error de acuerdo a tu situación
+			log.Fatalf("Error codificando usuario como JSON: %v", err)
+		}
+
+		peticion, err := http.NewRequest("POST", url, bytes.NewBuffer(tweetComoJson))
+		if err != nil {
+			// Maneja el error de acuerdo a tu situación
+			log.Fatalf("Error creando petición: %v", err)
+		}
+
+		peticion.Header.Add("Content-Type", "application/json")
+		peticion.Header.Add("X-Hola-Mundo", "Ejemplo")
+		respuesta, err := clienteHttp.Do(peticion)
+
+		if err != nil {
+			// Maneja el error de acuerdo a tu situación
+			log.Fatalf("Error haciendo petición: %v", err)
+		}
+
+		// No olvides cerrar el cuerpo al terminar
+		defer respuesta.Body.Close()
+
+		cuerpoRespuesta, err := ioutil.ReadAll(respuesta.Body)
+		if err != nil {
+			log.Fatalf("Error leyendo respuesta: %v", err)
+		}
+
+		respuestaString := string(cuerpoRespuesta)
+		/*log.Printf("Código de respuesta: %d", respuesta.StatusCode)
+		log.Printf("Encabezados: '%q'", respuesta.Header)
+		contentType := respuesta.Header.Get("Content-Type")
+		log.Printf("El tipo de contenido: '%s'", contentType)*/
+		log.Printf("Cuerpo de respuesta del servidor: '%s'", respuestaString)
+	}
 }
