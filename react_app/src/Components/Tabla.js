@@ -19,7 +19,7 @@ class Tabla extends React.Component {
     return(
       <form >  
                 <div class="container">
-                    <table class="table">
+                    <table class="table" style={{color: '#26756B'}}>
                         <thead>
                         <tr>
                             {cols.map(col => (

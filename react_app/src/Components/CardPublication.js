@@ -11,8 +11,7 @@ class NavVar extends React.Component {
     }
 
     render(){
-        var {nombre, comentario, fecha} = "";
-        var {hashtags} = []
+        var {nombre, comentario, fecha, hashtags} = "";
         var {upvotes} = 0;
         var {downvotes} = 0;
 
@@ -33,7 +32,7 @@ class NavVar extends React.Component {
                     <p class="card-text text-center">{comentario}</p>
                 </div >
                 <div class="card-footer text-muted">
-                    # {/*hashtags.join(', ')*/}
+                    {hashtags}
                 </div>
                 <div class="card-footer text-muted" style={{backgroundColor: '#212529', color: 'White'}}>
                     <button type="button" class="btn-dark btn-lg" disabled>{downvotes} <Like/></button>

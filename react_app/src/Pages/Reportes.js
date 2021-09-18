@@ -5,9 +5,14 @@ import Tabla from "../Components/Tabla";
 import Barras from "../Components/Barras"
 import Pastel from "../Components/Pastel"
 
+import {Spinner} from "reactstrap"
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 import Like from '@material-ui/icons/ThumbUpRounded';
 import Cat from '@material-ui/icons/Category';
 import Book from '@material-ui/icons/MenuBookRounded';
+
+const connection = require("../Recursos/Connection")
 
 
 
@@ -16,18 +21,21 @@ class Reportes extends React.Component {
         super(props);
         
         this.state = {
-            principalData: ["200000", "5000", "123456"],
-            cakeLabels: ['remo', 'bala', 'natacion', 'lanza', 'atletismo'],
-            cakeData: [15, 25, 30, 45, 500],
-            barLabels: ['01/09/2021', '02/09/2021', '03/09/2021', '04/09/2021', '05/09/2021', '06/09/2021', '07/09/2021'],
-            barData: [[15, 50, 500, 100, 800, 505, 550], [-5, -400, -500, -850, -915, -1010, -12000]],
-            columnas: ["NOMBRE", "FECHA", "MENSAJE", "HASHTAGS"],
-            report: "ambos"
+            principalData: [],
+            cakeLabels: [],
+            cakeData: [],
+            barLabels: [],
+            barData: [],
+            columnas: ['NOMBRE', 'FECHA', 'COMENTARIO', 'UPVOTES', 'DOWNVOTES', 'HASHTAGS'],
+            dataTable: [],
+            report: "ambos",
+            cargado: false   
         };
 
         this.setAmbos = this.setAmbos.bind(this);
         this.setBarras = this.setBarras.bind(this);
         this.setPastel = this.setPastel.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this)
     }
 
     setAmbos(){
@@ -48,7 +56,46 @@ class Reportes extends React.Component {
         })
     }
 
+    componentDidMount(){
+        fetch(connection.getConnection()+'/getReportsMySQL'
+        , {
+            method: 'POST', 
+            headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin' : '*',
+            'Access-Control-Allow-Methods' : 'GET, PUT, POST, DELETE',
+            'Access-Control-Allow-Headers': ''
+        },
+        body: JSON.stringify({"fecha": "xd"}) 
+        }).then(res => res.json()).then((data) => {
+            let newData = data["data"]
+            this.setState({
+                principalData: [newData.twits, newData.hashtags, newData.upvotes],
+                cakeLabels: newData["tophash"],
+                cakeData: newData["tophashData"],
+                barLabels: newData["days"],
+                barData: [newData["upvotesByDay"], newData["downvotesByDay"]],
+                dataTable: newData["last100entrys"],
+                cargado: true
+            })    
+            console.log(this.state.principalData)
+        })   
+        /*socket.on('addTweet', data => {
+            this.addTweet(data)
+            console.log(JSON.stringify(data), "-----")
+        })*/
+    }
+
     render() {
+        if(this.state.cargado===false){
+            return(
+                <form>
+                    <NavVar/>
+                    <div style={{textAlign: "center", marginTop: 250}}><Spinner color="light"/></div>           
+                </form>
+            )
+        }
+
         let ambos = [
             <div class="row" style={{marginRight: 25, marginLeft: 25, marginTop: 25}}>
                 <div class="col-sm-6">
@@ -88,7 +135,7 @@ class Reportes extends React.Component {
         return (
             <form>
                 <NavVar/>
-                <div class="row" style={{marginRight: 25, marginLeft: 25, marginTop: 25}}>
+                <div class="row" style={{marginRight: 25, marginLeft: 25, marginTop: 75}}>
                     <DataCard nombre="NOTICIAS" dato={this.state.principalData[0]} icon = {<Book fontSize="large"/>} />
                     <DataCard nombre="HASHTAGS" dato={this.state.principalData[1]+" DIFERENTES"} icon={<Cat fontSize="large"/>}/>
                     <DataCard nombre="UPVOTES" dato={this.state.principalData[2]} icon={<Like fontSize="large"/>}/>
@@ -111,7 +158,7 @@ class Reportes extends React.Component {
                 </div >         
 
                 <div>
-                    <Tabla columnas={this.state.columnas} tuplas={[]}/>
+                    <Tabla columnas={this.state.columnas} tuplas={this.state.dataTable}/>
                 </div>
             </form>
         );
