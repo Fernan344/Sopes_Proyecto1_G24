@@ -2,16 +2,18 @@ import React from "react";
 import NavVar from "../Components/NavVar";
 import Card from "../Components/CardPublication"
 import socket from "../Recursos/Socket";
+import {Spinner} from "reactstrap"
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 const connection = require("../Recursos/Connection")
 
 class Principal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            twits: [{"nombre": "Juaquin", "comentario": "Este Es Un Twit De Prueba", "fecha": "24/07/2021", "upvotes": 100, "downvotes":30, "hashtags": ["remo", "atletismo", "natacion"]},
-            {"nombre": "Pedro", "comentario": "Fue un maravilloso partido", "fecha": "24/15/2021", "upvotes": 200, "downvotes":30, "hashtags": ["remo", "atletismo", "basketball"]}],
-            add: false
-            
+            twits: [],
+            add: false,
+            cargado: false              
         }  
         this.addTweet = this.addTweet.bind(this);  
     }
@@ -32,7 +34,8 @@ class Principal extends React.Component {
             if (data["null"]===false){      
                 console.log(data["data"])
                 this.setState({
-                    twits: JSON.parse(data["data"]),       
+                    twits: JSON.parse(data["data"]),      
+                    cargado: true 
                 })
             }
         }) 
@@ -43,16 +46,27 @@ class Principal extends React.Component {
     }
 
     render() {
+        if(this.state.cargado===false){
+            return(
+                <form>
+                    <NavVar/>
+                    <div style={{textAlign: "center", marginTop: 250}}><Spinner color="light"/></div>           
+                </form>
+            )
+        }
+        
 
         return (
             <form>
                 <NavVar/>
+                <div style={{marginTop: 75}}>
                 {
+                    
                     this.state.twits.map(tupla => (
                         <Card nombre={tupla["nombre"]} comentario={tupla["comentario"]} fecha={tupla["fecha"]} hashtags={tupla["hashtags"]} downvotes={tupla["upvotes"]} upvotes={tupla["downvotes"]}/>
                     ))
-                }
-                
+                }    
+                </div>         
             </form>
         );
     }
