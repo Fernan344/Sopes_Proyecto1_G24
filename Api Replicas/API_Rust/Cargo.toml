@@ -11,6 +11,7 @@ rocket_codegen = { git = "https://github.com/SergioBenitez/Rocket" }
 
 chrono = "0.4.19"
 
+mongodb = "2.0.0"
 sqlx = { version = "0.5.7", features = [ "mysql","runtime-async-std-native-tls" ] }
 async-std = { version = "1.6", features = [ "attributes" ] }
 

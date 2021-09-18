@@ -8,8 +8,10 @@ use rocket::serde::{Serialize, Deserialize};
 use chrono::prelude::*; 
 
 use sqlx::mysql::MySqlPoolOptions;
+use mongodb::{Client, options::ClientOptions};
 
 #[derive(Serialize, Deserialize)]
+#[derive(Clone)]
 #[serde(crate = "rocket::serde")]
 pub struct Carga {
     pub nombre: String,
@@ -20,15 +22,55 @@ pub struct Carga {
     pub downvotes: usize
 }
 
+#[get("/echo")]
+fn echo() -> String{
+    String::from("echo")
+}
 
 #[post("/add_tweet", data = "<carga>")]
 async fn create(carga: Json<Carga>) -> String {
-    let insert_result = insert_twit(carga).await;
+    // insertando primero en mysql
+    let insert_result = insert_twit(carga.clone()).await;
     match insert_result {
-        Ok(_) => String::from("Tweet Insertado"),
-        Err(_) => String::from("No se pudo insertar el tweet"),
+        Ok(_) => {
+            // se inserto en mysql, probamos a insertar en cosmos db
+            let insert_cosmos_result = insert_twit_cosmos(carga.clone()).await;
+            match insert_cosmos_result {
+                Ok(_) => String::from("Tweet Insertado en todas la databases"),
+                Err(_) => String::from("Tweet Insertado en mysql"),
+            }
+        },
+        Err(_) => {
+            // se inserto en mysql, probamos a insertar en cosmos db
+            let insert_cosmos_result = insert_twit_cosmos(carga.clone()).await;
+            match insert_cosmos_result {
+                Ok(_) => String::from("Tweet Insertado en cosmosdb"),
+                Err(_) =>  String::from("No se pudo insertar el tweet"),
+            }
+        },       
     }
     
+}
+
+async fn insert_twit_cosmos(carga: Json<Carga>) -> Result<Json<Carga>, mongodb::error::Error> {
+    let client_options = ClientOptions::parse("mongodb://sopes1-g24-2021:kxeCcSywgmVVNUgN2vuDMPKwULZ01ZryPyJQm3R8SjfJeG2WB3pBd7BmwI8pA3nnd28No0gJIUOBLnK5JoNWdw==@sopes1-g24-2021.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@sopes1-g24-2021@").await?;
+    let client = Client::with_options(client_options)?;
+    let db = client.database("sopes1");
+
+    let collection = db.collection::<Carga>("proyecto1");
+
+    let new_doc = Carga {
+        nombre: carga.nombre.clone(),
+        comentario: carga.comentario.clone(),
+        fecha: carga.fecha.clone(),
+        hashtags: carga.hashtags.clone(),
+        upvotes: carga.upvotes.clone(),
+        downvotes: carga.downvotes.clone()
+    };
+
+    collection.insert_one(new_doc, None).await?;
+
+    Ok(carga)
 }
 
 async fn insert_twit(carga: Json<Carga>) -> Result<Json<Carga>, sqlx::Error>{
@@ -91,29 +133,5 @@ async fn insert_twit(carga: Json<Carga>) -> Result<Json<Carga>, sqlx::Error>{
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/rust", routes![create])
+        .mount("/rust", routes![create, echo])
 }
-
-/* async fn connect() -> Result<(), sqlx::Error>{
-    println!("Entre aqui");
-    let pool = MySqlPoolOptions::new()
-        .max_connections(5)
-        .connect("mysql://root:31370599@localhost/twitter").await?;
-
-    let stream = sqlx::query_as!(twit_id, "SELECT MAX(id) as id FROM twit")
-        .fetch_all(&pool)
-        .await?;
-
-    let id = stream[0].id.unwrap();
-    println!("{}", id);
-
-    println!("Voy saliendo");
-
-    sqlx::query("insert into twit (nombre, comentario, fecha, upvotes, downvotes) values ('Aldo Hernandez', 'b', STR_TO_DATE('16-09-2021', '%d-%m-%Y'), 11, 11)")
-        .execute(&pool)
-        .await?;
-
-    Ok(())
-}
- */
-
