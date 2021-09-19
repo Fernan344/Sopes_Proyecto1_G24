@@ -53,7 +53,8 @@ async fn create(carga: Json<Carga>) -> String {
 }
 
 async fn insert_twit_cosmos(carga: Json<Carga>) -> Result<Json<Carga>, mongodb::error::Error> {
-    let client_options = ClientOptions::parse("mongodb://sopes1-g24-2021:kxeCcSywgmVVNUgN2vuDMPKwULZ01ZryPyJQm3R8SjfJeG2WB3pBd7BmwI8pA3nnd28No0gJIUOBLnK5JoNWdw==@sopes1-g24-2021.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@sopes1-g24-2021@").await?;
+    let mongodbconnection = std::env::var("DATABASE_URL_COSMOS").expect("No se encuentra la variable de entorno para CosmosDB");
+    let client_options = ClientOptions::parse(mongodbconnection).await?;
     let client = Client::with_options(client_options)?;
     let db = client.database("sopes1");
 
@@ -75,9 +76,10 @@ async fn insert_twit_cosmos(carga: Json<Carga>) -> Result<Json<Carga>, mongodb::
 
 async fn insert_twit(carga: Json<Carga>) -> Result<Json<Carga>, sqlx::Error>{
     println!("Insertando nuevo twit");
+    let sqlconnection = std::env::var("DATABASE_URL").expect("No se encuentra la variable de entorno para SQL");
     let pool = MySqlPoolOptions::new()
         .max_connections(5)
-        .connect("mysql://root:31370599@localhost/twitter").await?;
+        .connect(sqlconnection.as_str()).await?;
 
     let strdate: &str = carga.fecha.as_str();
     let date = NaiveDate::parse_from_str(strdate, "%d/%m/%Y").unwrap();

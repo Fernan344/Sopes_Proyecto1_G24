@@ -1,1 +1,4 @@
 target
+Dockerfile
+*.yml
+*.ps1
