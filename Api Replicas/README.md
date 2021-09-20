@@ -20,4 +20,11 @@ GET: /<LANG>/echo
 
 ## Base de datos Cloud SQL
 
+```json
+{
+    "connection": "mysql://root:1234@35.184.7.29/Proyecto1",
+    "database": "Proyecto1"
+}
+```
+
 ...
