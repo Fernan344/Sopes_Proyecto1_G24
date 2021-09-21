@@ -60,8 +60,7 @@ class Principal extends React.Component {
             <form>
                 <NavVar/>
                 <div style={{marginTop: 75}}>
-                {
-                    
+                {                    
                     this.state.twits.map(tupla => (
                         <Card nombre={tupla["nombre"]} comentario={tupla["comentario"]} fecha={tupla["fecha"]} hashtags={tupla["hashtags"]} downvotes={tupla["upvotes"]} upvotes={tupla["downvotes"]}/>
                     ))
