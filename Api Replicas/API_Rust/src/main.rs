@@ -22,10 +22,37 @@ pub struct Carga {
     pub downvotes: usize
 }
 
+pub struct CargaPub {
+    pub nombre: String,
+    pub comentario: String,
+    pub fecha: String,
+    pub hashtags: Vec<String>,
+    pub upvotes: usize,
+    pub downvotes: usize,
+    pub api: String
+}
+
 #[get("/echo")]
 fn echo() -> String{
     String::from("echo")
 }
+
+#[get("/publicar")]
+fn publicar() -> String{
+    String::from("publicar")
+}
+
+#[post("/iniciarCarga"), data = "<carga>"]
+fn iniciarCarga(carga: Json<Carga>) -> Carga{
+
+}
+
+#[post("/finalizarCarga"), data = "<carga>"]
+fn finalizarCarga(carga: Json<Carga>) -> Carga {
+
+}
+
+
 
 #[post("/add_tweet", data = "<carga>")]
 async fn create(carga: Json<Carga>) -> String {
@@ -36,7 +63,10 @@ async fn create(carga: Json<Carga>) -> String {
             // se inserto en mysql, probamos a insertar en cosmos db
             let insert_cosmos_result = insert_twit_cosmos(carga.clone()).await;
             match insert_cosmos_result {
-                Ok(_) => String::from("Tweet Insertado en todas la databases"),
+                Ok(_) => {
+                    // PETICION /iniciarCarga
+                    String::from("Tweet Insertado en todas la databases")
+                },
                 Err(_) => String::from("Tweet Insertado en mysql"),
             }
         },
@@ -48,8 +78,7 @@ async fn create(carga: Json<Carga>) -> String {
                 Err(_) =>  String::from("No se pudo insertar el tweet"),
             }
         },       
-    }
-    
+    } 
 }
 
 async fn insert_twit_cosmos(carga: Json<Carga>) -> Result<Json<Carga>, mongodb::error::Error> {
