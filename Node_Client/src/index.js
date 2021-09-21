@@ -3,7 +3,7 @@ const Server = require('socket.io')
 const WebSocketServer = require('socket.io')
 const http = require('http')
 const theSocket = require('./Recursos/Socket');
-const clientRouter = require('./routes/client.router.js')
+const clientRouter = require('./Routes/client.router')
 
 const morgan = require('morgan');
 const cors = require('cors')
@@ -15,7 +15,7 @@ app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb'}));
 app.use(cors());
 app.use(morgan('dev'));
-app.set('port', process.env.PORT || 4000);
+app.set('port', process.env.PORT || 8080);
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
@@ -30,6 +30,6 @@ io.on('connection', (socket) => {
 })
 
 httpServer.listen(app.get('port'), ()=>{
-    console.log('server chambeando papi 4000'); 
+    console.log('server chambeando', app.get('port')); 
     theSocket.setSocket(io);
 });

@@ -1,5 +1,5 @@
 const theSocket = require('../Recursos/Socket');
-const pool = require('../Mysql/connection');
+const pool = require('../MySql/connection');
 
 exports.test = async (req, res) => {
     res.send('Hello World');
@@ -120,4 +120,8 @@ exports.reportesMySQL = async (req, res) => {
     let socket = theSocket.getSocket();
     socket.emit('addTweet', req.body);
     res.json({"saludos": "jsjsjs"})*/
+}
+
+exports.add_twit = async (req, res) => {
+    console.log(req.body);
 }
