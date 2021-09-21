@@ -4,13 +4,13 @@ from flask_mysqldb import MySQL
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_HOST'] = '35.184.7.29'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'josePJ64'
-app.config['MYSQL_DB'] = 'twitter'
+app.config['MYSQL_PASSWORD'] = '1234'
+app.config['MYSQL_DB'] = 'Proyecto1'
 mysql = MySQL(app)
 
-@app.route('/add_tweet', methods=['POST'])
+@app.route('/publicar', methods=['POST'])
 def createProduct(): 
 
     fecha = datetime.strptime(request.json['fecha'], '%d/%m/%Y')
@@ -19,7 +19,7 @@ def createProduct():
     cursor = mysql.connection.cursor()
 
     try:
-        cursor.execute('INSERT INTO twit (nombre, comentario, fecha, upvotes, downvotes) VALUES (%s, %s, %s, %s, %s)',
+        cursor.execute('INSERT INTO twit (nombre, comentario, fecha, upvotes, downvotes, api) VALUES (%s, %s, %s, %s, %s, \'python\')',
             (request.json['nombre'], request.json['comentario'], newDate, int(request.json['upvotes']), int(request.json['downvotes'])))
         mysql.connection.commit()
     except MySQLdb.Error as e:
