@@ -35,7 +35,7 @@ func main() {
 		clienteHttp := &http.Client{}
 		// Si quieres agregar parámetros a la URL simplemente haz una
 		// concatenación :)
-		url := "http://localhost:4500/add_tweet"
+		url := "http://localhost:5000/publicar"
 
 		tweetComoJson, err := json.Marshal(decoded[i])
 		if err != nil {
@@ -73,4 +73,5 @@ func main() {
 		log.Printf("El tipo de contenido: '%s'", contentType)*/
 		log.Printf("Cuerpo de respuesta del servidor: '%s'", respuestaString)
 	}
+
 }
