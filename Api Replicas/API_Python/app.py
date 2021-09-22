@@ -1,7 +1,9 @@
+from os import error
 import MySQLdb
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 from datetime import datetime
+import requests
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = '35.184.7.29'
@@ -10,8 +12,26 @@ app.config['MYSQL_PASSWORD'] = '1234'
 app.config['MYSQL_DB'] = 'Proyecto1'
 mysql = MySQL(app)
 
+@app.route('/iniciarCarga', methods=['GET'])
+def iniciarCarga(): 
+    try:
+        resp = requests.get('http://34.132.88.35:4444/iniciarCarga')
+        return resp.text
+    except ConnectionError :
+        print('Error De Conexion')
+        return jsonify({"Error": "Error"})        
+
+@app.route('/finalizarCarga', methods=['GET'])
+def finalizarCarga(): 
+    try:
+        resp = requests.get('http://34.132.88.35:4444/finalizarCarga')
+        return resp.text
+    except Exception as e :
+        print(e)
+        return jsonify({"Error": "Error"})   
+
 @app.route('/publicar', methods=['POST'])
-def createProduct(): 
+def publicar(): 
 
     fecha = datetime.strptime(request.json['fecha'], '%d/%m/%Y')
     newDate = datetime.strftime(fecha, '%Y-%m-%d')
@@ -64,7 +84,13 @@ def createProduct():
 
             except MySQLdb.Error as e:
                 print(e)
-        
+
+    
+    try:
+        p = {"Api": "python"}
+        requests.post('http://34.132.88.35:4444/publicar', data=p)
+    except Exception as e:
+        print(e) 
 
     return jsonify({"message": "ingresado"})
 
