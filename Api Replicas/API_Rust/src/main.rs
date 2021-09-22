@@ -161,11 +161,16 @@ async fn insert_twit(carga: Json<Carga>) -> Result<Json<Carga>, sqlx::Error>{
         api: String::from("rust")
     };
 
-    let _publicar_client = reqwest::Client::new()
+    let publicar_client = reqwest::Client::new()
         .post("http://34.132.88.35:4444/publicar")
         .json(&new_pub_sub)
         .send()
         .await;
+
+    match publicar_client {
+        Ok(_) => println!("Publicado en pubsub"),
+        Err(_) => println!("No se publico en pubsub"),
+    };
 
     Ok(carga)
 }

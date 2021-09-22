@@ -19,7 +19,17 @@ MODULE_VERSION("0.01");
 static int my_proc_show(struct seq_file *m, void *v)
 {
     //seq_printf(m,"hello from proc file\n");
-    seq_printf(m, "%s\n", str);
+    struct sysinfo i;
+
+    si_meminfo(&i);
+
+    seq_printf(m, "RAM INFO:\n");
+    seq_printf(m, "in use       %lu (%lu / 100)\n", i.totalram - i.freeram, 100 * (i.totalram - i.freeram) / i.totalram);
+    seq_printf(m, "free         %lu\n", i.freeram);
+    seq_printf(m, "total        %lu\n\n", i.totalram);
+
+    seq_printf(m, "CPU INFO:\n");
+    seq_printf(m, "process      %d\n\n", i.procs);
     return 0;
 }
 
@@ -46,7 +56,7 @@ static struct file_operations my_fops = {
 static int __init kernel_module_init_event(void)
 {
     struct proc_dir_entry *entry;
-    entry = proc_create("helloproc", 0777, NULL, &my_fops);
+    entry = proc_create("hardinfo", 0777, NULL, &my_fops);
     if (!entry)
     {
         return -1;
@@ -60,7 +70,7 @@ static int __init kernel_module_init_event(void)
 
 static void __exit kernel_module_exit_event(void)
 {
-    remove_proc_entry("helloproc", NULL);
+    remove_proc_entry("hardinfo", NULL);
     printk(KERN_INFO "Goodbye world!\n");
 }
 
