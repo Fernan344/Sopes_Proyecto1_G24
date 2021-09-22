@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -8,7 +9,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"bytes"
+
 	//"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -23,10 +24,10 @@ type twit struct {
 	Upvotes    int      `json:upvotes`
 	Downvotes  int      `json:downvotes`
 }
-type pubsub struct {
-	Api  string      `json:api`
-}
 
+type pubsub struct {
+	Api string `json:api`
+}
 
 func conexionDB() (conexion *sql.DB) {
 	Driver := "mysql"
@@ -46,32 +47,31 @@ func conexionDB() (conexion *sql.DB) {
 func indexRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome")
 }
+
 func iniciarCarga(w http.ResponseWriter, r *http.Request) {
-	res,err:=http.Get("http://34.132.88.35:4444/iniciarCarga")
+	res, err := http.Get("http://34.132.88.35:4444/iniciarCarga")
 	if err != nil {
 		log.Fatalln(err)
-	}else{
+	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-		   log.Fatalln(err)
+			log.Fatalln(err)
 		}
 		fmt.Fprintf(w, string(body))
-	 
-		 
 	}
 }
+
 func finalizarCarga(w http.ResponseWriter, r *http.Request) {
-	res,err:=http.Get("http://34.132.88.35:4444/finalizarCarga")
+	res, err := http.Get("http://34.132.88.35:4444/finalizarCarga")
 	if err != nil {
 		log.Fatalln(err)
-	}else{
+	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-		   log.Fatalln(err)
+			log.Fatalln(err)
 		}
 		fmt.Fprintf(w, string(body))
-	 
-		 
+
 	}
 }
 
@@ -176,15 +176,13 @@ func publicar(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	}
-	 
-			p, err2 := json.Marshal(pubsub{"go"})
-			if err2!= nil {
-				fmt.Print(err)
-			} else {
-				http.Post("http://34.132.88.35:4444/publicar", "application/json", bytes.NewBuffer(p))
-			}
 
-
+	p, err2 := json.Marshal(pubsub{"go"})
+	if err2 != nil {
+		fmt.Print(err)
+	} else {
+		http.Post("http://34.132.88.35:4444/publicar", "application/json", bytes.NewBuffer(p))
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
