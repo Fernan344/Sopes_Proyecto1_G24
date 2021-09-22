@@ -22,40 +22,40 @@ pub struct Carga {
     pub downvotes: usize
 }
 
-pub struct CargaPub {
-    pub nombre: String,
-    pub comentario: String,
-    pub fecha: String,
-    pub hashtags: Vec<String>,
-    pub upvotes: usize,
-    pub downvotes: usize,
+#[derive(Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct Pubsub {
     pub api: String
 }
 
-#[get("/echo")]
+#[get("/")]
 fn echo() -> String{
-    String::from("echo")
-}
-
-#[get("/publicar")]
-fn publicar() -> String{
-    String::from("publicar")
-}
-
-#[post("/iniciarCarga"), data = "<carga>"]
-fn iniciarCarga(carga: Json<Carga>) -> Carga{
-
-}
-
-#[post("/finalizarCarga"), data = "<carga>"]
-fn finalizarCarga(carga: Json<Carga>) -> Carga {
-
+    String::from("rust api")
 }
 
 
+#[get("/iniciarCarga")]
+async fn iniciar_carga() -> String {
+    let iniciar_carga = reqwest::get("http://34.132.88.35:4444/iniciarCarga").await;
+    match iniciar_carga {
+        Ok(_) => String::from("Carga iniciada"),
+        Err(_) => String::from("Carga no Iniciada"),
+    }
+}
 
-#[post("/add_tweet", data = "<carga>")]
-async fn create(carga: Json<Carga>) -> String {
+#[get("/finalizarCarga")]
+async fn finalizar_carga() -> String {
+    let finalizar_carga = reqwest::get("http://34.132.88.35:4444/finalizarCarga").await;
+    match finalizar_carga {
+        Ok(_) => String::from("Carga finalizada"),
+        Err(_) => String::from("Carga no finalizada"),
+    }
+}
+
+
+
+#[post("/publicar", data = "<carga>")]
+async fn publicar(carga: Json<Carga>) -> String {
     // insertando primero en mysql
     let insert_result = insert_twit(carga.clone()).await;
     match insert_result {
@@ -63,14 +63,12 @@ async fn create(carga: Json<Carga>) -> String {
             // se inserto en mysql, probamos a insertar en cosmos db
             let insert_cosmos_result = insert_twit_cosmos(carga.clone()).await;
             match insert_cosmos_result {
-                Ok(_) => {
-                    // PETICION /iniciarCarga
-                    String::from("Tweet Insertado en todas la databases")
-                },
+                Ok(_) => String::from("Tweet Insertado en todas la databases"),
                 Err(_) => String::from("Tweet Insertado en mysql"),
             }
         },
-        Err(_) => {
+        Err(error) => {
+            println!("Ocurrio un error y sql {}", error);
             // se inserto en mysql, probamos a insertar en cosmos db
             let insert_cosmos_result = insert_twit_cosmos(carga.clone()).await;
             match insert_cosmos_result {
@@ -114,7 +112,7 @@ async fn insert_twit(carga: Json<Carga>) -> Result<Json<Carga>, sqlx::Error>{
     let date = NaiveDate::parse_from_str(strdate, "%d/%m/%Y").unwrap();
 
     println!("Se insertara un tweet");
-    let insert_twit = format!("INSERT INTO twit (nombre, comentario, fecha, upvotes, downvotes) VALUES ('{}', '{}', '{}', {}, {})",
+    let insert_twit = format!("INSERT INTO twit (nombre, comentario, fecha, upvotes, downvotes, api) VALUES ('{}', '{}', '{}', {}, {}, 'rust')",
         carga.nombre,
         carga.comentario,
         date,
@@ -158,11 +156,22 @@ async fn insert_twit(carga: Json<Carga>) -> Result<Json<Carga>, sqlx::Error>{
             }
         }
     }
+
+    let new_pub_sub = Pubsub{
+        api: String::from("rust")
+    };
+
+    let _publicar_client = reqwest::Client::new()
+        .post("http://34.132.88.35:4444/publicar")
+        .json(&new_pub_sub)
+        .send()
+        .await;
+
     Ok(carga)
 }
 
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/rust", routes![create, echo])
+        .mount("/", routes![echo, publicar, iniciar_carga, finalizar_carga])
 }
