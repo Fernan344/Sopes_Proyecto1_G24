@@ -3,19 +3,20 @@ import MySQLdb
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 from datetime import datetime
+import json
 import requests
 
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = '35.184.7.29'
+app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '1234'
-app.config['MYSQL_DB'] = 'Proyecto1'
+app.config['MYSQL_PASSWORD'] = 'josePJ64'
+app.config['MYSQL_DB'] = 'Twitter'
 mysql = MySQL(app)
 
 @app.route('/iniciarCarga', methods=['GET'])
 def iniciarCarga(): 
     try:
-        resp = requests.get('http://34.132.88.35:4444/iniciarCarga')
+        resp = requests.get('http://35.184.136.235:4444/iniciarCarga')
         return resp.text
     except ConnectionError :
         print('Error De Conexion')
@@ -24,7 +25,7 @@ def iniciarCarga():
 @app.route('/finalizarCarga', methods=['GET'])
 def finalizarCarga(): 
     try:
-        resp = requests.get('http://34.132.88.35:4444/finalizarCarga')
+        resp = requests.get('http://35.184.136.235:4444/finalizarCarga')
         return resp.text
     except Exception as e :
         print(e)
@@ -88,7 +89,7 @@ def publicar():
     
     try:
         p = {"Api": "python"}
-        requests.post('http://34.132.88.35:4444/publicar', data=p)
+        requests.post('http://35.184.136.235:4444/publicar', data=json.dumps(p))
     except Exception as e:
         print(e) 
 
