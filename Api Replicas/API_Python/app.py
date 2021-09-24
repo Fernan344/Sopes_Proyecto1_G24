@@ -12,6 +12,11 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'josePJ64'
 app.config['MYSQL_DB'] = 'Twitter'
 mysql = MySQL(app)
+@app.route('/', methods=['GET'])
+def Encendido(): 
+    
+    return jsonify({"message": "Encendido"})       
+
 
 @app.route('/iniciarCarga', methods=['GET'])
 def iniciarCarga(): 
