@@ -36,7 +36,7 @@ fn echo() -> String{
 
 #[get("/iniciarCarga")]
 async fn iniciar_carga() -> String {
-    let iniciar_carga = reqwest::get("http://34.132.88.35:4444/iniciarCarga").await;
+    let iniciar_carga = reqwest::get("http://35.184.136.235:4444/iniciarCarga").await;
     match iniciar_carga {
         Ok(_) => String::from("Carga iniciada"),
         Err(_) => String::from("Carga no Iniciada"),
@@ -45,7 +45,7 @@ async fn iniciar_carga() -> String {
 
 #[get("/finalizarCarga")]
 async fn finalizar_carga() -> String {
-    let finalizar_carga = reqwest::get("http://34.132.88.35:4444/finalizarCarga").await;
+    let finalizar_carga = reqwest::get("http://35.184.136.235:4444/finalizarCarga").await;
     match finalizar_carga {
         Ok(_) => String::from("Carga finalizada"),
         Err(_) => String::from("Carga no finalizada"),
@@ -162,7 +162,7 @@ async fn insert_twit(carga: Json<Carga>) -> Result<Json<Carga>, sqlx::Error>{
     };
 
     let publicar_client = reqwest::Client::new()
-        .post("http://34.132.88.35:4444/publicar")
+        .post("http://35.184.136.235:4444/publicar")
         .json(&new_pub_sub)
         .send()
         .await;
@@ -171,7 +171,6 @@ async fn insert_twit(carga: Json<Carga>) -> Result<Json<Carga>, sqlx::Error>{
         Ok(_) => println!("Publicado en pubsub"),
         Err(_) => println!("No se publico en pubsub"),
     };
-
     Ok(carga)
 }
 
