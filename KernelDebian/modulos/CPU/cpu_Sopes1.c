@@ -44,40 +44,42 @@ seq_printf(archivo, "{\n");
 	return 0;
 }
 
-static int al_abrir(struct inode *inode, struct file*file){
-	return single_open(file, escribir_archivo, NULL);	
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,18,0)
+#define HAVE_PROC_CREATE_SINGLE
+#endif
+
+
+
+#ifndef HAVE_PROC_CREATE_SINGLE
+static int skynet_open(struct inode *inode, struct  file *file) {
+  return single_open(file, escribir_archivo, NULL);
 }
-static ssize_t write_proc(struct file *file, const char __user *bufer, size_t count, loff_t *offp){
 
-    return 0;
-
-}
-
-
-static struct proc_ops operaciones = {
-    .proc_open = al_abrir,
-    .proc_read = seq_read,
-    .proc_write = write_proc,
-	.proc_release = single_release,
-     
+static const struct file_operations skynet_fops = {
+  .owner = THIS_MODULE,
+  .open = skynet_open,
+  .read = seq_read,
+  .llseek = seq_lseek,
+  .release = single_release,
 };
+#endif
 
-int iniciar(void){ //modulo de inicio
-	proc_create("cpu_Sopes1", 0, NULL, &operaciones);
-	printk(KERN_INFO "%s", "CARGANDO MODULO");
-	
-	 
-	return 0;
+
+static int __init skynet_init(void) {
+#ifdef HAVE_PROC_CREATE_SINGLE
+  proc_create_single("skynet", 0, NULL, skynet_show);
+#else
+  proc_create("skynet", 0, NULL, &skynet_fops);
+#endif
+  printk(KERN_INFO "Skynet in control\n");
+
+  return 0;
 }
 
-void salir(void){
-	remove_proc_entry("cpu_Sopes1",NULL);
-	printk(KERN_INFO "%s","REMOVIENDO MODULO");
-	
+static void __exit skynet_cleanup(void) {
+  remove_proc_entry("skynet", NULL);
+  printk(KERN_INFO "I'll be back!\n");
 }
 
-module_init(iniciar);
-module_exit(salir);
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Sopes1");
+module_init(skynet_init);
+module_exit(skynet_cleanup);
