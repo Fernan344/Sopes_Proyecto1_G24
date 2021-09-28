@@ -2,18 +2,22 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
-
-	//"strconv"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type twit struct {
@@ -32,10 +36,10 @@ type pubsub struct {
 func conexionDB() (conexion *sql.DB) {
 	Driver := "mysql"
 	Usuario := "root"
-	Contrasenia := "josePJ64"
-	Nombre := "twitter"
+	Contrasenia := "1234"
+	Nombre := "Proyecto1"
 
-	conexion, err := sql.Open(Driver, Usuario+":"+Contrasenia+"@tcp(127.0.0.1)/"+Nombre)
+	conexion, err := sql.Open(Driver, Usuario+":"+Contrasenia+"@tcp(35.184.7.29)/"+Nombre)
 
 	if err != nil {
 		panic(err.Error())
@@ -48,8 +52,71 @@ func indexRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome")
 }
 
+func insertCosmos(nombre string, comentario string, fecha string, hashtags []string, upvotes int, downvotes int) {
+	//Cosmos DB
+	cosmos_user_name := "sopes1-g24-2021"
+	cosmos_password := "kxeCcSywgmVVNUgN2vuDMPKwULZ01ZryPyJQm3R8SjfJeG2WB3pBd7BmwI8pA3nnd28No0gJIUOBLnK5JoNWdw=="
+	cosmos_url := "sopes1-g24-2021.mongo.cosmos.azure.com"
+	cosmos_database_name := "sopes1"
+	cosmos_collection_name := "proyecto1"
+	cosmos_port := 10255
+	cosmos_args := "ssl=true&retrywrites=false&ssl_cert_reqs=CERT_NONE"
+
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?%s",
+		cosmos_user_name, cosmos_password, cosmos_url, strconv.Itoa(cosmos_port), cosmos_database_name, cosmos_args)
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
+
+	collection := client.Database(cosmos_database_name).Collection(cosmos_collection_name)
+
+	newArrayHash := bson.A{}
+
+	for _, e := range hashtags {
+		newArrayHash = append(newArrayHash, e)
+	}
+
+	docs := []interface{}{
+		bson.M{"nombre": nombre,
+			"comentario": comentario,
+			"fecha":      fecha,
+			"hashtags":   newArrayHash,
+			"upvotes":    upvotes,
+			"downvotes":  downvotes},
+	}
+
+	res, insertErr := collection.InsertMany(ctx, docs)
+	if insertErr != nil {
+		log.Fatal(insertErr)
+	}
+	fmt.Println(res)
+
+	/*cur, currErr := collection.Find(ctx, bson.M{})
+
+	if currErr != nil {
+		panic(currErr)
+	}
+	defer cur.Close(ctx)
+
+	var posts []twit
+	if err = cur.All(ctx, &posts); err != nil {
+		panic(err)
+	}
+	fmt.Println(posts)*/
+}
+
 func iniciarCarga(w http.ResponseWriter, r *http.Request) {
-	res, err := http.Get("http://35.184.136.235:4444/iniciarCarga")
+	res, err := http.Get("http://34.132.88.35:4444/iniciarCarga")
 	if err != nil {
 		log.Fatalln(err)
 	} else {
@@ -62,7 +129,7 @@ func iniciarCarga(w http.ResponseWriter, r *http.Request) {
 }
 
 func finalizarCarga(w http.ResponseWriter, r *http.Request) {
-	res, err := http.Get("http://35.184.136.235:4444/finalizarCarga")
+	res, err := http.Get("http://34.132.88.35:4444/finalizarCarga")
 	if err != nil {
 		log.Fatalln(err)
 	} else {
@@ -88,8 +155,6 @@ func publicar(w http.ResponseWriter, r *http.Request) {
 	fechaParts := strings.Split(newTwit.Fecha, "/")
 	newFecha := fechaParts[2] + "-" + fechaParts[1] + "-" + fechaParts[0]
 	newTwit.Fecha = newFecha
-
-	fmt.Println(newTwit.Hashtags)
 
 	conexion := conexionDB()
 	insertarRegistros, err := conexion.Prepare("INSERT INTO TWIT(nombre, comentario, fecha, upvotes, downvotes, api) VALUES(?,?,?,?,?,'go')")
@@ -177,11 +242,13 @@ func publicar(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	insertCosmos(newTwit.Nombre, newTwit.Comentario, newTwit.Fecha, newTwit.Hashtags, newTwit.Upvotes, newTwit.Downvotes)
+
 	p, err2 := json.Marshal(pubsub{"go"})
 	if err2 != nil {
 		fmt.Print(err)
 	} else {
-		http.Post("http://35.184.136.235:4444/publicar", "application/json", bytes.NewBuffer(p))
+		http.Post("http://34.132.88.35:4444/publicar", "application/json", bytes.NewBuffer(p))
 	}
 
 	w.Header().Set("Content-Type", "application/json")
