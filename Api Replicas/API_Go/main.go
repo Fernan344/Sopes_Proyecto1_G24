@@ -116,7 +116,7 @@ func insertCosmos(nombre string, comentario string, fecha string, hashtags []str
 }
 
 func iniciarCarga(w http.ResponseWriter, r *http.Request) {
-	res, err := http.Get("http://34.132.88.35:4444/iniciarCarga")
+	res, err := http.Get("http://35.184.136.235:4444/iniciarCarga")
 	if err != nil {
 		log.Fatalln(err)
 	} else {
@@ -129,7 +129,7 @@ func iniciarCarga(w http.ResponseWriter, r *http.Request) {
 }
 
 func finalizarCarga(w http.ResponseWriter, r *http.Request) {
-	res, err := http.Get("http://34.132.88.35:4444/finalizarCarga")
+	res, err := http.Get("http://35.184.136.235:4444/finalizarCarga")
 	if err != nil {
 		log.Fatalln(err)
 	} else {
@@ -248,7 +248,7 @@ func publicar(w http.ResponseWriter, r *http.Request) {
 	if err2 != nil {
 		fmt.Print(err)
 	} else {
-		http.Post("http://34.132.88.35:4444/publicar", "application/json", bytes.NewBuffer(p))
+		http.Post("http://35.184.136.235:4444/publicar", "application/json", bytes.NewBuffer(p))
 	}
 
 	w.Header().Set("Content-Type", "application/json")
