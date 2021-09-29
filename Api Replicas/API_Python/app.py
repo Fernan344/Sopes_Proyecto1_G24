@@ -146,4 +146,4 @@ def publicar():
     return jsonify({"message": "ingresado"})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=4500)
+    app.run(debug=True, port=4500,host="0.0.0.0")
