@@ -11,7 +11,7 @@ def cargarDatos(ruta):
         for dato in datos:
             try:
                 headers={'Content-Type':'application/json'}
-                resp = requests.post('http://localhost:5001/datos', data = json.dumps(dato),headers=headers)
+                resp = requests.post('http://localhost:8056/', data = json.dumps(dato),headers=headers)
                 if resp.status_code<300:
                     contadorEnviados=contadorEnviados+1
                 else:
@@ -29,6 +29,6 @@ def cargarDatos(ruta):
 
 if __name__=="__main__":
     #esta ruta se cambia dependiendo del archivo de entrada
-   ruta="C:\sopes1\datos.json"
+   ruta="generated.json"
    cargarDatos(ruta)
  
