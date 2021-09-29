@@ -113,6 +113,7 @@ func main() {
 	router.HandleFunc("/DatoCpu", datosCPU).Methods("GET")
 	router.HandleFunc("/Cpu", homeCPU).Methods("GET")
 	// levantamos el servidor en el puerto 4444 
+        fmt.Print("encendido")
 	log.Fatal(http.ListenAndServe(":7894", router))
 }
 
