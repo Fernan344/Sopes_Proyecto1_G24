@@ -11,7 +11,7 @@ def cargarDatos(ruta):
         for dato in datos:
             try:
                 headers={'Content-Type':'application/json'}
-                resp = requests.post('http://localhost:8056/', data = json.dumps(dato),headers=headers)
+                resp = requests.post('http://34.117.248.209/', data = json.dumps(dato),headers=headers)
                 if resp.status_code<300:
                     contadorEnviados=contadorEnviados+1
                 else:
