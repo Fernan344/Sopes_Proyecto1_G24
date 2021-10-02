@@ -2,7 +2,12 @@
 
 ## Integrantes
 
-- Aldo Rigoberto Hernandez Avila **201800585**
+|          Nombre              |    Carne    |
+|------------------------------|-------------|
+|Aldo Rigoberto Hernandez Avila|**201800585**|
+|Cinthya Andrea Palomo Galvez  |**201700670**|
+|Jose Fernando Guerra Muñoz    |**201731087**|
+
 
 ## Cuentas de Nube
 
@@ -15,3 +20,29 @@
 > >  *Cuenta:* gruporedes24@gmail.com
 > >
 > > *Pass:* ##2021Sopes
+
+
+# Manual Técnico
+> ¿Qué generador de tráfico es más rápido? ¿Qué diferencias hay entre las implementaciones de los generadores de tráfico?
+> - Respuesta
+> > >
+> ¿Qué lenguaje de programación utilizado para las APIs fue más óptimo con relación al tiempo de respuesta entre peticiones? ¿Qué lenguaje tuvo el performance menos óptimo?
+> - Respuesta
+> > >
+> ¿Cuál de los servicios de Google Cloud Platform fue de mejor para la implementación de las APIs? ¿Cuál fue el peor? ¿Por qué?
+> - Respuesta
+> > >
+> ¿Considera que es mejor utilizar Containerd o Docker y por qué?
+> - Respuesta
+> > >
+> ¿Qué base de datos tuvo la menor latencia entre respuestas y soportó más carga en un determinado momento? ¿Cuál de las dos recomendaría para un proyecto de esta índole?
+> - Respuesta
+> > >
+> Considera de utilidad la utilización de Prometheus y Grafana para crear dashboards, ¿Por qué?
+> - Si, lo consideramos muy útil porque ayuda a ver de forma gráfica y sencilla cada dato y así poderlo analizar con detenimiento y ver el factor de utilización de cada variable o proceso del sistema.
+
+# Manual de Usuario
+
+### Base de Datos ER
+![image](https://user-images.githubusercontent.com/36779113/135707489-ee4e7dce-aa2d-4514-b63d-06fcd8def95f.png)
+
