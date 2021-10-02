@@ -40,6 +40,8 @@
 > > >
 > Considera de utilidad la utilización de Prometheus y Grafana para crear dashboards, ¿Por qué?
 > - Si, lo consideramos muy útil porque ayuda a ver de forma gráfica y sencilla cada dato y así poderlo analizar con detenimiento y ver el factor de utilización de cada variable o proceso del sistema.
+> - - ![image](https://user-images.githubusercontent.com/36779113/135707599-e81eceee-d4c5-4152-ad39-c4cc425f2dcb.png)
+
 
 # Manual de Usuario
 
