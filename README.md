@@ -24,8 +24,10 @@
 
 # Manual Técnico
 > ¿Qué generador de tráfico es más rápido? ¿Qué diferencias hay entre las implementaciones de los generadores de tráfico?
-> - ![image](https://user-images.githubusercontent.com/36779113/135778402-7175be2d-7c42-4eae-bd94-ba7d68c34038.png)
-> - ![image](https://user-images.githubusercontent.com/36779113/135778881-bee94a8b-65b4-4822-a4d2-32cc3df70fe8.png)
+> ![image](https://user-images.githubusercontent.com/36779113/135778402-7175be2d-7c42-4eae-bd94-ba7d68c34038.png)
+> ![image](https://user-images.githubusercontent.com/36779113/135778881-bee94a8b-65b4-4822-a4d2-32cc3df70fe8.png)
+> ![image](https://user-images.githubusercontent.com/36779113/135877604-58c9c2ca-453b-4fa3-981d-99f49a7abbfb.png)
+> - El generador más rápido a mi consideración fue el de golang debido a que tuvo menores tiempos en que se incertaron los datos, por lo que respecta al tiempo fue más eficiente.
 > > >
 > ¿Qué lenguaje de programación utilizado para las APIs fue más óptimo con relación al tiempo de respuesta entre peticiones? ¿Qué lenguaje tuvo el performance menos óptimo?
 > - Respuesta
