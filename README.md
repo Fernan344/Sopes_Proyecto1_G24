@@ -24,7 +24,8 @@
 
 # Manual Técnico
 > ¿Qué generador de tráfico es más rápido? ¿Qué diferencias hay entre las implementaciones de los generadores de tráfico?
-> - Respuesta
+> - ![image](https://user-images.githubusercontent.com/36779113/135778402-7175be2d-7c42-4eae-bd94-ba7d68c34038.png)
+> - ![image](https://user-images.githubusercontent.com/36779113/135778881-bee94a8b-65b4-4822-a4d2-32cc3df70fe8.png)
 > > >
 > ¿Qué lenguaje de programación utilizado para las APIs fue más óptimo con relación al tiempo de respuesta entre peticiones? ¿Qué lenguaje tuvo el performance menos óptimo?
 > - Respuesta
