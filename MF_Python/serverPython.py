@@ -3,6 +3,8 @@
 #tercero instalar py -m pip install requests
 import json
 import requests
+import time
+import random
 def cargarDatos(ruta):
     contadorEnviados=0
     contadorError=0
@@ -12,7 +14,12 @@ def cargarDatos(ruta):
             try:
                 headers={'Content-Type':'application/json'}
                 resp = requests.post('http://34.117.248.209/', data = json.dumps(dato),headers=headers)
+                sleeptime= random.uniform(0.1, 0.9)
+                temporal={"time": str(sleeptime)}
+                time.sleep(sleeptime)
+                
                 if resp.status_code<300:
+                    resp1 = requests.post('http://34.133.229.81:8056/metrics', data = temporal)
                     contadorEnviados=contadorEnviados+1
                 else:
                     contadorError=contadorError+1

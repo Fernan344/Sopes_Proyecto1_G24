@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -35,7 +37,7 @@ func main() {
 		clienteHttp := &http.Client{}
 		// Si quieres agregar parámetros a la URL simplemente haz una
 		// concatenación :)
-		url := "http://localhost:5000/publicar"
+		url := "http://34.117.248.209/"
 
 		tweetComoJson, err := json.Marshal(decoded[i])
 		if err != nil {
@@ -67,11 +69,39 @@ func main() {
 		}
 
 		respuestaString := string(cuerpoRespuesta)
-		/*log.Printf("Código de respuesta: %d", respuesta.StatusCode)
-		log.Printf("Encabezados: '%q'", respuesta.Header)
-		contentType := respuesta.Header.Get("Content-Type")
-		log.Printf("El tipo de contenido: '%s'", contentType)*/
+		//log.Printf("Código de respuesta: %d", respuesta.StatusCode)
+		//log.Printf("Encabezados: '%q'", respuesta.Header)
+		//contentType := respuesta.Header.Get("Content-Type")
+		//log.Printf("El tipo de contenido: '%s'", contentType)
 		log.Printf("Cuerpo de respuesta del servidor: '%s'", respuestaString)
-	}
 
+		stamptime := rand.Float64()
+		time.Sleep(time.Duration(stamptime) * time.Second)
+		f := fmt.Sprint(stamptime)
+
+		var jsonStr = []byte(`{"time": ` + f + "}")
+		peticiones, err := http.NewRequest("POST", "http://34.133.229.81:8056/metrics", bytes.NewBuffer(jsonStr))
+		if err != nil {
+			// Maneja el error de acuerdo a tu situación
+			log.Fatalf("Error creando petición: %v", err)
+		}
+		peticiones.Header.Add("Content-Type", "application/json")
+		peticiones.Header.Add("X-Hola-Mundo", "Ejemplo")
+		respuestas, err := clienteHttp.Do(peticiones)
+
+		if err != nil {
+			// Maneja el error de acuerdo a tu situación
+			log.Fatalf("Error haciendo petición: %v", err)
+		}
+
+		// No olvides cerrar el cuerpo al terminar
+		defer respuestas.Body.Close()
+		cuerpoRespuestas, err := ioutil.ReadAll(respuestas.Body)
+		if err != nil {
+			log.Fatalf("Error leyendo respuesta: %v", err)
+		}
+
+		respuestaStrings := string(cuerpoRespuestas)
+		log.Printf("Cuerpo de respuesta del servidor: '%s'", respuestaStrings)
+	}
 }

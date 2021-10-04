@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
 	"strings"
 	"time"
 
@@ -53,6 +54,8 @@ type contador struct {
 	Api      string `json:"api"`
 }
 
+var arreglo [6]Publicar
+
 var dt time.Time
 var contadores [3]contador
 
@@ -63,6 +66,13 @@ func limpiar() int {
 	contadores[0].Api = "Python"
 	contadores[1].Api = "Go"
 	contadores[2].Api = "Rust"
+	arreglo[0] = Publicar{Guardados: 0, Api: "Python", TiempoDeCarga: 0, Db: "CloudSQL"}
+	arreglo[1] = Publicar{Guardados: 0, Api: "Python", TiempoDeCarga: 0, Db: "Cosmo"}
+	arreglo[2] = Publicar{Guardados: 0, Api: "Go", TiempoDeCarga: 0, Db: "CloudSQL"}
+	arreglo[3] = Publicar{Guardados: 0, Api: "Go", TiempoDeCarga: 0, Db: "Cosmo"}
+	arreglo[4] = Publicar{Guardados: 0, Api: "Rust", TiempoDeCarga: 0, Db: "CloudSQL"}
+	arreglo[5] = Publicar{Guardados: 0, Api: "Rust", TiempoDeCarga: 0, Db: "Cosmo"}
+
 	return 1
 }
 func fecha() int {
@@ -79,6 +89,10 @@ func main() {
 	http.HandleFunc("/iniciarCarga", func(w http.ResponseWriter, r *http.Request) {
 		limpiar()
 		fmt.Fprintf(w, "iniciarCarga")
+	})
+
+	http.HandleFunc("/notificar", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(arreglo)
 	})
 
 	http.HandleFunc("/publicar", func(w http.ResponseWriter, r *http.Request) {
@@ -180,7 +194,7 @@ func main() {
 			publish(string(_rust3))
 		}
 
-		arreglo := [6]Publicar{_python, _rust, _go, _python5, _rust5, _go5}
+		arreglo = [6]Publicar{_python, _rust, _go, _python5, _rust5, _go5}
 
 		p, err5 := json.Marshal(arreglo)
 		if err5 != nil {
