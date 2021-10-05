@@ -157,7 +157,7 @@ func publicar(w http.ResponseWriter, r *http.Request) {
 	newTwit.Fecha = newFecha
 
 	conexion := conexionDB()
-	insertarRegistros, err := conexion.Prepare("INSERT INTO TWIT(nombre, comentario, fecha, upvotes, downvotes, api) VALUES(?,?,?,?,?,'go')")
+	insertarRegistros, err := conexion.Prepare("INSERT INTO twit(nombre, comentario, fecha, upvotes, downvotes, api) VALUES(?,?,?,?,?,'go')")
 	if err != nil {
 		panic(err)
 	}

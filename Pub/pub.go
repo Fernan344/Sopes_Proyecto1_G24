@@ -202,14 +202,14 @@ func main() {
 		}
 
 		strstring := `# HELP go_fecha_tiempo fecha api py.
-# TYPE go_fecha_tiempo gauge
-go_fecha_tiempo ` + strconv.Itoa(_fecha) + `
-# HELP go_fechago_tiempo fecha api go.
-# TYPE go_fechago_tiempo gauge
-go_fechago_tiempo ` + strconv.Itoa(_fechago) + `
-# HELP go_fecharust_tiempo fecha api rust.
-# TYPE go_fecharust_tiempo gauge
-go_fecharust_tiempo ` + strconv.Itoa(_fecharust)
+		# TYPE go_fecha_tiempo gauge
+		go_fecha_tiempo ` + strconv.Itoa(_fecha) + `
+		# HELP go_fechago_tiempo fecha api go.
+		# TYPE go_fechago_tiempo gauge
+		go_fechago_tiempo ` + strconv.Itoa(_fechago) + `
+		# HELP go_fecharust_tiempo fecha api rust.
+		# TYPE go_fecharust_tiempo gauge
+		go_fecharust_tiempo ` + strconv.Itoa(_fecharust)
 
 		datos := Tiempo{
 			Time: fmt.Sprintf("%v", strstring),
@@ -220,7 +220,7 @@ go_fecharust_tiempo ` + strconv.Itoa(_fecharust)
 			fmt.Println(err)
 		}
 		// este me sirve para grafana
-		position, err12 := http.Post("http://34.133.229.81:8070/metrics'", "application/json", bytes.NewBuffer(b))
+		position, err12 := http.Post("http://34.133.229.81:8070/metrics", "application/json", bytes.NewBuffer(b))
 		if err12 != nil {
 			fmt.Print(err12)
 		} else {
@@ -236,10 +236,12 @@ go_fecharust_tiempo ` + strconv.Itoa(_fecharust)
 			fmt.Print(err5)
 		} else {
 
-			pos, err10 := http.Post("https://proyecto1sopes-326001.uc.r.appspot.com/setNotifications", "application/json", bytes.NewBuffer(p))
+			pos, err10 := http.Post("https://halogen-segment-328016.uc.r.appspot.com/setNotifications", "application/json", bytes.NewBuffer(p))
 			if err10 != nil {
 				fmt.Print(err10)
 			} else {
+				fmt.Println("")
+				fmt.Println("")
 				fmt.Print(pos)
 			}
 
