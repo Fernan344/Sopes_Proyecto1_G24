@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+
 	"strings"
 	"time"
 
@@ -53,6 +55,12 @@ type contador struct {
 	Api      string `json:"api"`
 }
 
+type Tiempo struct {
+	Time string `json:"time"`
+}
+
+var arreglo [6]Publicar
+
 var dt time.Time
 var contadores [3]contador
 
@@ -63,6 +71,13 @@ func limpiar() int {
 	contadores[0].Api = "Python"
 	contadores[1].Api = "Go"
 	contadores[2].Api = "Rust"
+	arreglo[0] = Publicar{Guardados: 0, Api: "Python", TiempoDeCarga: 0, Db: "CloudSQL"}
+	arreglo[1] = Publicar{Guardados: 0, Api: "Python", TiempoDeCarga: 0, Db: "Cosmo"}
+	arreglo[2] = Publicar{Guardados: 0, Api: "Go", TiempoDeCarga: 0, Db: "CloudSQL"}
+	arreglo[3] = Publicar{Guardados: 0, Api: "Go", TiempoDeCarga: 0, Db: "Cosmo"}
+	arreglo[4] = Publicar{Guardados: 0, Api: "Rust", TiempoDeCarga: 0, Db: "CloudSQL"}
+	arreglo[5] = Publicar{Guardados: 0, Api: "Rust", TiempoDeCarga: 0, Db: "Cosmo"}
+
 	return 1
 }
 func fecha() int {
@@ -79,6 +94,10 @@ func main() {
 	http.HandleFunc("/iniciarCarga", func(w http.ResponseWriter, r *http.Request) {
 		limpiar()
 		fmt.Fprintf(w, "iniciarCarga")
+	})
+
+	http.HandleFunc("/notificar", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(arreglo)
 	})
 
 	http.HandleFunc("/publicar", func(w http.ResponseWriter, r *http.Request) {
@@ -111,17 +130,19 @@ func main() {
 		_python.Db = "Cosmo"
 		_python.TiempoDeCarga = _fecha
 
+		_fechago := fecha()
 		var _go Publicar
 		_go.Guardados = contadores[1].Cantidad
 		_go.Api = contadores[1].Api
 		_go.Db = "Cosmo"
-		_go.TiempoDeCarga = _fecha
+		_go.TiempoDeCarga = _fechago
 
+		_fecharust := fecha()
 		var _rust Publicar
 		_rust.Guardados = contadores[2].Cantidad
 		_rust.Api = contadores[2].Api
 		_rust.Db = "Cosmo"
-		_rust.TiempoDeCarga = _fecha
+		_rust.TiempoDeCarga = _fecharust
 		//se cargan datos con mysql
 		var _python5 Publicar
 		_python5.Guardados = contadores[0].Cantidad
@@ -133,13 +154,13 @@ func main() {
 		_go5.Guardados = contadores[1].Cantidad
 		_go5.Api = contadores[1].Api
 		_go5.Db = "CloudSQL"
-		_go5.TiempoDeCarga = _fecha
+		_go5.TiempoDeCarga = _fechago
 
 		var _rust5 Publicar
 		_rust5.Guardados = contadores[2].Cantidad
 		_rust5.Api = contadores[2].Api
 		_rust5.Db = "CloudSQL"
-		_rust5.TiempoDeCarga = _fecha
+		_rust5.TiempoDeCarga = _fecharust
 
 		_python2, err2 := json.Marshal(_python)
 		if err2 != nil {
@@ -180,7 +201,35 @@ func main() {
 			publish(string(_rust3))
 		}
 
-		arreglo := [6]Publicar{_python, _rust, _go, _python5, _rust5, _go5}
+		strstring := `# HELP go_fecha_tiempo fecha api py.
+# TYPE go_fecha_tiempo gauge
+go_fecha_tiempo ` + strconv.Itoa(_fecha) + `
+# HELP go_fechago_tiempo fecha api go.
+# TYPE go_fechago_tiempo gauge
+go_fechago_tiempo ` + strconv.Itoa(_fechago) + `
+# HELP go_fecharust_tiempo fecha api rust.
+# TYPE go_fecharust_tiempo gauge
+go_fecharust_tiempo ` + strconv.Itoa(_fecharust)
+
+		datos := Tiempo{
+			Time: fmt.Sprintf("%v", strstring),
+		}
+
+		b, err := json.MarshalIndent(datos, "", "  ")
+		if err != nil {
+			fmt.Println(err)
+		}
+		// este me sirve para grafana
+		position, err12 := http.Post("http://34.133.229.81:8070/metrics'", "application/json", bytes.NewBuffer(b))
+		if err12 != nil {
+			fmt.Print(err12)
+		} else {
+			fmt.Print(position)
+		}
+
+		print(string(b))
+
+		arreglo = [6]Publicar{_python, _rust, _go, _python5, _rust5, _go5}
 
 		p, err5 := json.Marshal(arreglo)
 		if err5 != nil {
