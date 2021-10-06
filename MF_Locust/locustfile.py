@@ -5,6 +5,7 @@ import json
 from random import random, randrange
 from sys import getsizeof
 from locust import HttpUser, task, between
+import requests
 
 # Esta variable controlara si queremos que salgan todas las salidas, o unicamente las mas importantes
 debug = True
@@ -57,6 +58,7 @@ class Reader():
         # Ya que leeremos un archivo, es mejor realizar este proceso con un Try Except
         try:
             # Asignamos el valor del archivo traffic.json a la variable data_file
+
             with open("traffic.json", 'r') as data_file:
                 # Con el valor que leemos de data_file vamos a cargar el array con los datos
                 self.array = json.loads(data_file.read())
@@ -80,6 +82,7 @@ class MessageTraffic(HttpUser):
     # Este metodo se ejecutara POR USUARIO (o sea, si definimos 3 usuarios, se ejecutara 3 veces y tendremos 3 archivos)
     def on_start(self):
         print (">> MessageTraffic: Iniciando el envio de tráfico")
+        requests.get('http://34.117.248.209/iniciarCarga',"")
         # Iniciaremos nuestra clase reader
         self.reader = Reader()
         # Cargaremos nuestro archivo de datos traffic.json
@@ -102,10 +105,12 @@ class MessageTraffic(HttpUser):
             printDebug (data_to_send)
 
             # Enviar los datos que acabamos de obtener
-            self.client.post("/", json=random_data)
+            self.client.post("", json=random_data)
 
         # En este segmento paramos la ejecución del proceso de creación de tráfico
         else:
+            requests.get('http://34.117.248.209/finalizarCarga',"")
             print(">> MessageTraffic: Envio de tráfico finalizado, no hay más datos que enviar.")
+            
             # Parar ejecucion del usuario
             self.stop(True) # Se envía True como parámetro para el valor "force", este fuerza a locust a parar el proceso inmediatamente.

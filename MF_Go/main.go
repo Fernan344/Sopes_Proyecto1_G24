@@ -37,7 +37,13 @@ func main() {
 		clienteHttp := &http.Client{}
 		// Si quieres agregar parámetros a la URL simplemente haz una
 		// concatenación :)
-		url := "http://34.117.248.209/"
+		res1, err := http.Get("http://34.117.248.209/iniciarCarga")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer res1.Body.Close()
+
+		url := "http://34.117.248.209/publicar"
 
 		tweetComoJson, err := json.Marshal(decoded[i])
 		if err != nil {
@@ -103,5 +109,11 @@ func main() {
 
 		respuestaStrings := string(cuerpoRespuestas)
 		log.Printf("Cuerpo de respuesta del servidor: '%s'", respuestaStrings)
+		res, err := http.Get("http://34.117.248.209/finalizarCarga")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer res.Body.Close()
+
 	}
 }

@@ -8,12 +8,14 @@ import random
 def cargarDatos(ruta):
     contadorEnviados=0
     contadorError=0
+    requests.get('http://34.117.248.209/iniciarCarga',"")
     with open(ruta)as contenido:
         datos=json.load(contenido)
         for dato in datos:
             try:
                 headers={'Content-Type':'application/json'}
-                resp = requests.post('http://34.117.248.209/', data = json.dumps(dato),headers=headers)
+                
+                resp = requests.post('http://34.117.248.209/publicar', data = json.dumps(dato),headers=headers)
                 sleeptime= random.uniform(0.1, 0.9)
                 temporal={"time": str(sleeptime)}
                 time.sleep(sleeptime)
@@ -27,6 +29,7 @@ def cargarDatos(ruta):
                 contadorError=contadorError+1
     print("cantidad de datos enviados ",contadorEnviados)
     print("cantidad de datos con error ",contadorError)
+    requests.get('http://34.117.248.209/finalizarCarga',"")
                 
             
 
