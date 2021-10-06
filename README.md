@@ -32,7 +32,7 @@
 > > >
 > ¿Qué lenguaje de programación utilizado para las APIs fue más óptimo con relación al tiempo de respuesta entre peticiones? ¿Qué lenguaje tuvo el performance menos óptimo?
 > Según las gráficas pudimos observar que la de mayor eficiencia y óptimo corresponde a la de python, en cambio el que obtuvo menos performance menos óptimo fue el de Rust.
-> - ![image](https://user-images.githubusercontent.com/36779113/136285251-957bffd7-e734-4a00-9d97-53b0b92c9a6a.png)
+> - ![image](https://user-images.githubusercontent.com/36779113/136286634-dec516c4-326c-4374-b5d7-727d2264eeda.png)
 
 > > >
 > ¿Cuál de los servicios de Google Cloud Platform fue de mejor para la implementación de las APIs? ¿Cuál fue el peor? ¿Por qué?
