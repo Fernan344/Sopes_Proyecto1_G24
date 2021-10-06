@@ -31,7 +31,9 @@
 > - El generador más rápido a nuestra consideración fue el de golang debido a que tuvo menores tiempos en que se incertaron los datos, por lo que respecta al tiempo fue más eficiente.
 > > >
 > ¿Qué lenguaje de programación utilizado para las APIs fue más óptimo con relación al tiempo de respuesta entre peticiones? ¿Qué lenguaje tuvo el performance menos óptimo?
-> - Respuesta
+> Según las gráficas pudimos observar que la de mayor eficiencia y óptimo corresponde a la de python, en cambio el que obtuvo menos performance menos óptimo fue el de Rust.
+> - ![image](https://user-images.githubusercontent.com/36779113/136285251-957bffd7-e734-4a00-9d97-53b0b92c9a6a.png)
+
 > > >
 > ¿Cuál de los servicios de Google Cloud Platform fue de mejor para la implementación de las APIs? ¿Cuál fue el peor? ¿Por qué?
 > - La mejor a nuestro parecer fue el Cloud Run, porque hace uso de contenedores, y el peor fue el de Cloud Function, porque depende como este preparada la plataforma para ejecutar esa aplicación y no es versátil.
