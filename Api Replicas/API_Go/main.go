@@ -54,9 +54,9 @@ func indexRoute(w http.ResponseWriter, r *http.Request) {
 
 func insertCosmos(nombre string, comentario string, fecha string, hashtags []string, upvotes int, downvotes int) {
 	//Cosmos DB
-	cosmos_user_name := "sopes1-g24-p1"
-	cosmos_password := "D4AzozObRXdLSI4oyCld8D06jqt1VagWlMugSXJbaU0DmkOqQNjHR5CF7D28WC3pzrvC62jCYTcNDsRR7GwoFw=="
-	cosmos_url := "sopes1-g24-p1.mongo.cosmos.azure.com"
+	cosmos_user_name := "cosmos-calificacion"
+	cosmos_password := "3IlHj1WMnBFTvlc0MeAG9rWLMwNu14bkevGnwIS4VcxEmKHA3o3czPMhcXbnXGCOYyNLAyjVyGczZ1esgc0Vmg=="
+	cosmos_url := "cosmos-calificacion.mongo.cosmos.azure.com"
 	cosmos_database_name := "sopes1"
 	cosmos_collection_name := "proyecto1"
 	cosmos_port := 10255
