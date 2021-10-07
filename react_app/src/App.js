@@ -4,7 +4,6 @@ import Principal from "./Pages/Principal";
 import Reportes from "./Pages/Reportes";
 
 function App() { 
-
   return(
     <BrowserRouter>
         <Route path="/Principal" component={Principal} />

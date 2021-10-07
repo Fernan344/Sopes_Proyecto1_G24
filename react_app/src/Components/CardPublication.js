@@ -18,7 +18,10 @@ class NavVar extends React.Component {
         if(this.props.nombre != null) nombre = this.props.nombre;
         if(this.props.comentario != null) comentario = this.props.comentario;
         if(this.props.fecha != null) fecha = this.props.fecha;
-        if(this.props.hashtags != null) hashtags = this.props.hashtags;
+        if(this.props.hashtags != null){
+            if(this.props.hashtags instanceof Array) hashtags = "#"+this.props.hashtags.join(' #')
+            else hashtags = this.props.hashtags
+        };
         if(this.props.upvotes != null) upvotes = this.props.upvotes;
         if(this.props.downvotes != null) downvotes = this.props.downvotes;
 

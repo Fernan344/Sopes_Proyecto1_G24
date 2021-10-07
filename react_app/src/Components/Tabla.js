@@ -14,12 +14,13 @@ class Tabla extends React.Component {
         cols = this.props.columnas;
     }
     var {tuplas} = [];
-    if(this.props.tuplas != null)
+    if(this.props.tuplas != null && this.props.tuplas != undefined)
         tuplas = this.props.tuplas;
+        
     return(
       <form >  
                 <div class="container">
-                    <table class="table" style={{color: '#26756B'}}>
+                    <table class="table" style={{color: '#AFAFAF'}}>
                         <thead>
                         <tr>
                             {cols.map(col => (
