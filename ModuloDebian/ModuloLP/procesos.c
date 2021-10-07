@@ -27,7 +27,9 @@ struct task_struct *task_child; //estructura necesaria para iterar a travez de p
 struct task_struct *memtask; 
 
 static int proc_llenar_archivo(struct seq_file *archivo, void *v) {
-
+	struct sysinfo i;
+        si_meminfo(&i);
+        seq_printf(archivo, "%lu\n%lu\n%lu\n%lu\n",(i.totalram * i.mem_unit)/1024, ((i.totalram - i.freeram) * i.mem_unit)/1024, (i.freeram * i.mem_unit)/1024,((i.totalram - i.freeram)*100)/i.totalram);
    for_each_process( task ){
 seq_printf(archivo, "{\n");
 	seq_printf(archivo, "\"pid\": %d,\n",task->pid);
@@ -78,7 +80,7 @@ static struct file_operations myops ={
 
 
 static int inicializando(void){
-    proc_create(FileProc,0,NULL,&myops);  
+    proc_create(FileProc,077,NULL,&myops);  
     printk(KERN_INFO "INICIAR LISTA PROCESOS");
     return 0;
 }

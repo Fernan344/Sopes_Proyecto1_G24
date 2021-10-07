@@ -202,14 +202,22 @@ func main() {
 		}
 
 		strstring := `# HELP go_fecha_tiempo fecha api py.
-		# TYPE go_fecha_tiempo gauge
-		go_fecha_tiempo ` + strconv.Itoa(_fecha) + `
-		# HELP go_fechago_tiempo fecha api go.
-		# TYPE go_fechago_tiempo gauge
-		go_fechago_tiempo ` + strconv.Itoa(_fechago) + `
-		# HELP go_fecharust_tiempo fecha api rust.
-		# TYPE go_fecharust_tiempo gauge
-		go_fecharust_tiempo ` + strconv.Itoa(_fecharust)
+
+# TYPE go_fecha_tiempo gauge
+
+go_fecha_tiempo ` + strconv.Itoa(_fecha) + `
+
+# HELP go_fechago_tiempo fecha api go.
+
+# TYPE go_fechago_tiempo gauge
+
+go_fechago_tiempo ` + strconv.Itoa(_fechago) + `
+
+# HELP go_fecharust_tiempo fecha api rust.
+
+# TYPE go_fecharust_tiempo gauge
+
+go_fecharust_tiempo ` + strconv.Itoa(_fecharust)
 
 		datos := Tiempo{
 			Time: fmt.Sprintf("%v", strstring),
